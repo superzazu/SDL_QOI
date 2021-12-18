@@ -3,9 +3,9 @@
 /**
  * \mainpage SDL_QOI
  *
- * [QOI](https://github.com/phoboslab/qoi#readme) image decoding for SDL2
- * in C99. Copy SDL_QOI.h, SDL_QOI.c and
- * [qoi.h](https://github.com/phoboslab/qoi/commit/03606a0be7bff7a734c805aea638d48ed0e5e72f)
+ * [QOI](https://github.com/phoboslab/qoi#readme) image decoding and encoding
+ * for SDL2 in C99. Copy SDL_QOI.h, SDL_QOI.c and
+ * [qoi.h](https://github.com/phoboslab/qoi/blob/master/qoi.h)
  * into your project.
  *
  * Checkout the file "example.c" for a full example, or jump right in:
@@ -14,6 +14,8 @@
  * \sa SDL_LoadQOI_Texture_RW
  * \sa SDL_LoadQOI
  * \sa SDL_LoadQOI_Texture
+ * \sa SDL_SaveQOI_RW
+ * \sa SDL_SaveQOI
  *
  */
 
@@ -65,5 +67,23 @@ SDL_Texture* SDL_LoadQOI_Texture_RW(
  */
 #define SDL_LoadQOI_Texture(ren, file) \
   SDL_LoadQOI_Texture_RW(ren, SDL_RWFromFile(file, "rb"), 1)
+
+/**
+ * \fn int SDL_SaveQOI_RW(SDL_Surface* sur, SDL_RWops* dst, int freedst)
+ * \brief Saves QOI data from a SDL_Surface.
+ *
+ *    \param sur the SDL_Surface to read from
+ *    \param dst the SDL_RWops to save to
+ *    \param freedst if non-zero, calls SDL_RWclose() on dst before returning
+ *   \return 0 if success, non-zero if an error happened
+ *
+ * \sa SDL_SaveQOI
+ */
+int SDL_SaveQOI_RW(SDL_Surface* sur, SDL_RWops* dst, int freedst);
+
+/**
+ * Saves a surface as a QOI file. Convenience macro.
+ */
+#define SDL_SaveQOI(sur, dst) SDL_SaveQOI_RW(sur, SDL_RWFromFile(dst, "wb"), 1)
 
 #endif // SDL_QOI_H

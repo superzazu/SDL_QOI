@@ -13,13 +13,13 @@ static inline void* getPixels(
 
   size_t size;
   void* data = SDL_LoadFile_RW(src, &size, freesrc);
-  if (!data) {
+  if (data == NULL) {
     return NULL;
   }
 
   void* pixels = qoi_decode(data, size, desc, 0);
   if (pixels == NULL) {
-    SDL_SetError("Unable to decode QOI");
+    SDL_SetError("Unable to decode QOI data");
     SDL_free(data);
     return NULL;
   }
@@ -71,4 +71,41 @@ SDL_Texture* SDL_LoadQOI_Texture_RW(
 
   SDL_free(pixels);
   return tex;
+}
+
+int SDL_SaveQOI_RW(SDL_Surface* sur, SDL_RWops* dst, int freedst) {
+  SDL_bool hasAlpha = sur->format->Amask != 0;
+  Uint32 format = hasAlpha ? SDL_PIXELFORMAT_RGBA32 : SDL_PIXELFORMAT_RGB24;
+  int channels = hasAlpha ? 4 : 3;
+
+  SDL_Surface* convertedSur = SDL_ConvertSurfaceFormat(sur, format, 0);
+  if (convertedSur == NULL) {
+    return 1;
+  }
+
+  qoi_desc desc = {.width = convertedSur->w,
+      .height = convertedSur->h,
+      .channels = channels,
+      .colorspace = QOI_SRGB};
+
+  int size = 0;
+  void* pixels = qoi_encode(convertedSur->pixels, &desc, &size);
+  if (pixels == NULL) {
+    SDL_SetError("Unable to encode QOI data");
+    SDL_FreeSurface(convertedSur);
+    if (freedst) {
+      SDL_RWclose(dst);
+    }
+    return 1;
+  }
+
+  int res = SDL_RWwrite(dst, pixels, 1, size);
+
+  SDL_free(pixels);
+  SDL_FreeSurface(convertedSur);
+  if (freedst) {
+    SDL_RWclose(dst);
+  }
+
+  return res != size;
 }

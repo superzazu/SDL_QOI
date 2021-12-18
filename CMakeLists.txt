@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(SDL_QOI
   LANGUAGES C
-  DESCRIPTION "QOI image decoding for SDL2"
+  DESCRIPTION "QOI image decoding and encoding for SDL2"
   HOMEPAGE_URL "https://github.com/superzazu/SDL_QOI")
 
 find_package(SDL2 REQUIRED)
