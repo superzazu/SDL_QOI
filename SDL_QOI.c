@@ -2,6 +2,7 @@
 #define QOI_NO_STDIO
 #define QOI_MALLOC(sz) SDL_malloc(sz)
 #define QOI_FREE(p) SDL_free(p)
+#define QOI_ZEROARR(a) SDL_memset((a), 0, sizeof(a))
 #define QOI_IMPLEMENTATION
 #include "qoi.h"
 
